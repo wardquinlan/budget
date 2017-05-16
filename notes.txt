@@ -1,0 +1,18 @@
+Version 3.11
+------------
+
+- add new attribute "Mark as Hidden" to account
+- make schema changes accordingly to ACCOUNT table (possibly rename column)
+- change wording from "hide accounts with zero balance" on profile screen, to "show hidden accounts"
+- reverse polarity when reading / writing from database
+- make changes to controller / DAO, to include hidden account balances - see method getOverallBalance()
+
+Version 3.17
+------------
+
+- getOverallBalance() w/ transactId - effective that transact id
+- show last balanced overall balance
+  => see BudgetDAO.getBalancedTransactForAccount()
+X move an account's transact table to below the form
+- introduce a limit or a date or a transact id into a profile - limits from that date or that transact id
+

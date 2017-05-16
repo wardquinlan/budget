@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <definition name="default" template="/WEB-INF/views/default.jspx">
+        <put-attribute name="header" value="/WEB-INF/views/header.jspx"/>
+        <put-attribute name="footer" value="/WEB-INF/views/footer.jspx"/>
+        <put-list-attribute name="jsIncludes">
+            <add-attribute value="/resources/scripts/jquery-2.1.4.min.js"/>
+            <add-attribute value="/resources/scripts/datatables.min.js"/>
+        </put-list-attribute>
+        <put-list-attribute name="cssIncludes">
+            <add-attribute value="/resources/css/budget.css"/>
+            <add-attribute value="/resources/css/datatables.min.css"/>
+        </put-list-attribute>
+    </definition>
+</tiles-definitions>

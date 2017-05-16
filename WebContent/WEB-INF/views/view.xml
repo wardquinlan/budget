@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN" "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+
+<tiles-definitions>
+    <definition name="login" extends="default">
+        <put-attribute name="body" value="/WEB-INF/views/login.jspx"/>
+        <put-list-attribute name="jsIncludes" inherit="true">
+            <add-attribute value="/resources/scripts/login.js"/>
+        </put-list-attribute>
+    </definition>
+    <definition name="profile" extends="default">
+        <put-attribute name="body" value="/WEB-INF/views/profile.jspx"/>
+        <put-list-attribute name="jsIncludes" inherit="true">
+        	<add-attribute value="/resources/scripts/profile.js"/>
+        </put-list-attribute>
+    </definition>
+    <definition name="account" extends="default">
+        <put-attribute name="body" value="/WEB-INF/views/account.jspx"/>
+        <put-list-attribute name="jsIncludes" inherit="true">
+            <add-attribute value="/resources/scripts/account.js"/>
+        </put-list-attribute>
+    </definition>
+    <definition name="requests" extends="default">
+        <put-attribute name="body" value="/WEB-INF/views/requests.jspx"/>
+        <put-list-attribute name="jsIncludes" inherit="true">
+            <add-attribute value="/resources/scripts/requests.js"/>
+        </put-list-attribute>
+    </definition>
+    <definition name="accounts" extends="default">
+        <put-attribute name="body" value="/WEB-INF/views/accounts.jspx"/>
+        <put-list-attribute name="jsIncludes" inherit="true">
+            <add-attribute value="/resources/scripts/accounts.js"/>
+        </put-list-attribute>
+    </definition>
+    <definition name="403" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/403.jspx"/>
+    </definition>
+    <definition name="404" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/404.jspx"/>
+    </definition>
+    <definition name="500" extends="default">
+      <put-attribute name="body" value="/WEB-INF/views/500.jspx"/>
+    </definition>
+</tiles-definitions>

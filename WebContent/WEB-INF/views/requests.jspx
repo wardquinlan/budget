@@ -1,0 +1,83 @@
+<jsp:root xmlns:spring="http://www.springframework.org/tags"
+          xmlns:jsp="http://java.sun.com/JSP/Page"
+          xmlns:security="http://www.springframework.org/security/tags"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:form="http://www.springframework.org/tags/form"
+          xmlns:tiles="http://tiles.apache.org/tags-tiles"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          version="2.1">
+
+  <jsp:output omit-xml-declaration="yes" />
+
+  <div class="content">
+    <c:if test="${not empty msgText}">
+      <div class="messages">
+        <label>Messages</label>
+        <span class="text messages"><c:out value="${msgText}"/></span>
+      </div>
+    </c:if>
+    <c:if test="${not empty errorText}">
+      <div class="errors">
+        <label>The following error(s) occurred:</label>
+        <span class="text errors"><c:out value="${errorText}"/></span>
+      </div>
+    </c:if>
+    <div class="list">
+      <table id="requests" class="cell-border">
+        <thead>
+          <th>ID</th>
+          <th>State</th>
+          <th>Timestamp</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Amount</th>
+          <th>Notes</th>
+          <th>Action</th>
+        </thead>
+        <tbody>
+          <c:forEach items="${requestList}" var="request">
+            <tr>
+              <td><c:out value="${request.id}"/></td>
+              <td><c:out value="${request.stateAsString}"/></td>
+              <td><c:out value="${request.formattedTs}"/></td>
+              <td><c:out value="${request.from.extendedName}"/></td>
+              <td><c:out value="${request.to.extendedName}"/></td>
+              <td><c:out value="${request.formattedAmount}"/></td>
+              <td><c:out value="${request.note}"/></td>
+              <td>
+                <c:choose>
+	              <c:when test="${request.state eq 0 and request.from.owner.id eq currentUser.id}">
+	                <!-- pending -->
+	                <spring:url var="url" value="/requests/action-accept">
+	                   <spring:param name="id" value="${request.id}"/>
+	                </spring:url>
+	                <a class="action" href="${url}">Accept</a>
+                    <spring:url var="url" value="/requests/action-decline">
+                       <spring:param name="id" value="${request.id}"/>
+                    </spring:url>
+	                <a class="action" href="${url}">Decline</a>
+                  </c:when>
+	              <c:when test="${request.to.owner.id eq currentUser.id}">
+	                <!-- declined -->
+                    <spring:url var="url" value="/requests/action-delete">
+                       <spring:param name="id" value="${request.id}"/>
+                    </spring:url>
+	                <a class="action" href="${url}">Delete</a>
+	              </c:when>
+	            </c:choose>
+              </td>
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>
+    </div>
+    <spring:url var="url" value="/requests"/>
+    <form:form action="${url}" autocomplete="off" method="post">
+      <div class="buttonbox">
+        <input type="submit" name="back" value="Back to Accounts..."/>
+      </div>
+    </form:form>
+  </div>
+
+</jsp:root>

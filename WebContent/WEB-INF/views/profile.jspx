@@ -1,0 +1,56 @@
+<jsp:root xmlns:spring="http://www.springframework.org/tags"
+          xmlns:jsp="http://java.sun.com/JSP/Page"
+          xmlns:security="http://www.springframework.org/security/tags"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:form="http://www.springframework.org/tags/form"
+          xmlns:tiles="http://tiles.apache.org/tags-tiles"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          version="2.1">
+
+  <jsp:output omit-xml-declaration="yes" />
+  
+    <spring:url var="url" value="/profile"/>
+    <form:form modelAttribute="profile" method="post" autocomplete="off" action="${url}">
+      <div class="content">
+        <c:if test="${not empty errorText}">
+          <div class="errors">
+            <label>The following error(s) occurred:</label>
+            <span class="text errors"><c:out value="${errorText}"/></span>
+          </div>
+        </c:if>
+        <div class="field2">
+          <label>Current Password</label>
+          <span class="text">
+            <form:password path="currentPassword"/>
+          </span>
+        </div>
+        <div class="field2">
+          <label>New Password</label>
+          <span class="text">
+	        <form:password path="newPassword"/>
+	      </span>
+        </div>
+        <div class="field2">
+          <label>Retype New Password</label>
+          <span class="text">
+	        <form:password path="newPassword2"/>
+	      </span>
+        </div>
+        <div class="field2">
+          <label>Transaction Limit</label>
+          <span class="text">
+            <form:input path="lim"/>
+          </span>
+        </div>
+        <div class="field2">
+          <form:checkbox path="show" label="Show Hidden Accounts"/>
+        </div>
+        <div class="buttonbox">
+          <input type="submit" name="change" value="Update Profile"/>
+          <input type="submit" name="back" value="Back to Accounts..."/>
+        </div>
+      </div>
+    </form:form>
+  
+</jsp:root>

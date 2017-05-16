@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:security="http://www.springframework.org/schema/security"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+                        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+                        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+                        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+    <security:http use-expressions="true">
+        <security:intercept-url pattern="/login" access="permitAll" />
+        <security:intercept-url pattern="/resources/**" access="permitAll" />
+        <security:intercept-url pattern="/**" access="authenticated"/>
+        <security:form-login login-page="/login" default-target-url="/loginSuccess" always-use-default-target="true" authentication-failure-url="/login?login_error=1" />
+        <security:logout logout-url="/logout" logout-success-url="/login"/>
+    </security:http>
+
+    <security:global-method-security pre-post-annotations="enabled"/>
+    
+    <security:authentication-manager>
+        <security:authentication-provider ref="budgetAuthenticationProvider"/>
+    </security:authentication-manager>
+    
+    <bean id="budgetAuthenticationProvider" class="budget.BudgetAuthenticationProvider"/>
+    
+</beans>                        

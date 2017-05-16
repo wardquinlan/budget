@@ -1,0 +1,79 @@
+<project name="Budget" default="deploy" basedir=".">
+  <description>
+    Budget build file
+  </description>
+
+  <property name="appname" value="Budget"/>
+  <property name="javahome" value="/home/ward/jdk1.8.0_65"/>
+  <property name="tomcathome" value="/home/ward/apache-tomcat-7.0.67"/>
+  <property name="src" value="src"/>
+  <property name="webcontent" value="WebContent"/>
+  <property name="output" value="output"/>
+
+  <path id="buildpath">
+    <fileset dir="${webcontent}/WEB-INF/lib">
+      <include name="*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <target name="clean" depends="init">
+    <delete dir="${output}"/>
+    <delete file="${appname}.war"/>
+    <delete file="${tomcathome}/webapps/${appname}.war"/>
+    <delete dir="${tomcathome}/webapps/${appname}"/>
+  </target>
+
+  <target name="compile" depends="clean">
+    <mkdir dir="${output}"/>
+    <mkdir dir="${output}/WEB-INF"/>
+    <mkdir dir="${output}/WEB-INF/classes"/>
+    <mkdir dir="${output}/WEB-INF/lib"/>
+    <mkdir dir="${output}/WEB-INF/views"/>
+    <mkdir dir="${output}/META-INF"/>
+    <mkdir dir="${output}/resources"/>
+    <mkdir dir="${output}/resources/css"/>
+    <mkdir dir="${output}/resources/scripts"/>
+    <mkdir dir="${output}/resources/images"/>
+
+    <copy todir="${output}/resources/css">
+      <fileset dir="${webcontent}/resources/css" includes="*.*"/>
+    </copy>
+    <copy todir="${output}/resources/scripts">
+      <fileset dir="${webcontent}/resources/scripts" includes="*.*"/>
+    </copy>
+    <copy todir="${output}/resources/images">
+      <fileset dir="${webcontent}/resources/images" includes="*.*"/>
+    </copy>
+
+    <copy todir="${output}/WEB-INF">
+      <fileset dir="${webcontent}/WEB-INF" includes="*.xml"/>
+    </copy>
+
+    <copy todir="${output}/WEB-INF/views">
+      <fileset dir="${webcontent}/WEB-INF/views" includes="*.*"/>
+    </copy>
+
+    <copy todir="${output}/META-INF" file="${webcontent}/META-INF/MANIFEST.MF"/>
+
+    <javac debug="true" srcdir="${src}" destdir="${output}/WEB-INF/classes" classpathref="buildpath"/>
+    <copy todir="${output}/WEB-INF/classes" file="${src}/log4j.properties"/>
+
+    <copy todir="${output}/WEB-INF/lib">
+      <fileset dir="${webcontent}/WEB-INF/lib" includes="*.jar"/>
+    </copy>
+  </target>
+
+  <target name="war" depends="compile">
+    <jar jarfile="${appname}.war" basedir="${output}"/>
+  </target>
+
+  <target name="deploy" depends="war">
+    <copy todir="${tomcathome}/webapps" file="${appname}.war"/>
+  </target>
+
+  <target name="rebuild" depends="clean,war"/>
+</project>

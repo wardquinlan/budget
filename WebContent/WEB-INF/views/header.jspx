@@ -1,0 +1,45 @@
+<jsp:root xmlns:spring="http://www.springframework.org/tags"
+          xmlns:jsp="http://java.sun.com/JSP/Page"
+          xmlns:security="http://www.springframework.org/security/tags"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:form="http://www.springframework.org/tags/form"
+          xmlns:tiles="http://tiles.apache.org/tags-tiles"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          version="2.1">
+
+    <div class="banner">
+      <div class="banner-left">
+        <div class="banner-text-container">
+          <span class="banner-text-bold"><c:out value="Budget - ${pageTitle}"/></span>
+        </div>
+      </div>
+      <div class="banner-right">
+        <div class="banner-text-container">
+          <c:if test="${pageTitle ne 'Login'}">
+            <span class="banner-text">
+              <c:out value="Logged in as: "/> 
+              <spring:url var="url" value="/profile"/>
+              <a href="${url}"><b><c:out value="${pageContext.request.userPrincipal.name}"/></b></a>
+            </span>
+            <span class="banner-text">
+              <c:out value="|"/>
+            </span>
+            <spring:url var="url" value="/accounts"/>
+            <a class="banner-text" href="${url}">Accounts</a>
+            <span class="banner-text">
+              <c:out value="|"/>
+            </span>
+            <spring:url var="url" value="/requests"/>
+            <a class="banner-text" href="${url}">Requests</a>
+            <span class="banner-text">
+              <c:out value="|"/>
+            </span>
+            <spring:url var="url" value="/logout"/>
+            <a class="banner-text" href="${url}">Logout</a>
+          </c:if>
+        </div>
+      </div>
+    </div>
+    
+</jsp:root>

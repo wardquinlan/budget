@@ -1,0 +1,193 @@
+<jsp:root xmlns:spring="http://www.springframework.org/tags"
+          xmlns:jsp="http://java.sun.com/JSP/Page"
+          xmlns:security="http://www.springframework.org/security/tags"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:form="http://www.springframework.org/tags/form"
+          xmlns:tiles="http://tiles.apache.org/tags-tiles"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          version="2.1">
+
+  <jsp:output omit-xml-declaration="yes" />
+
+  <div class="content">
+    <form:form action="transact" modelAttribute="account" autocomplete="off" method="post">
+      <div class="field2">
+        <div class="banner-left">
+          <label>Account Name</label>
+          <span class="text"><c:out value="${account.nameOrig}"/></span>
+        </div>
+        <div class="banner-left">
+          <label>Account Owner</label>
+          <span class="text"><c:out value="${account.owner.name}"/></span>
+        </div>
+      </div>
+      <div class="field2">
+        <div class="banner-left">
+          <label>Account Privacy</label>
+          <c:choose>
+            <c:when test="${account.pub eq true}">
+              <c:if test="${account.owner.name eq pageContext.request.userPrincipal.name}">
+                <input type="submit" class="visibility" name="private" value="Mark as Private"/>
+              </c:if>
+              <span class="text">
+                <spring:url var="img" value="/resources/images/public-bl.jpg"/>
+                <div class="privacy1">
+                  <img class="privacy" src="${img}" title="Public"/>
+                </div>
+                <div class="privacy2">
+                  <c:out value="Public"/>
+                </div>
+              </span>
+            </c:when>
+            <c:otherwise>
+              <c:if test="${account.owner.name eq pageContext.request.userPrincipal.name}">
+                <input type="submit" class="visibility" name="public" value="Mark as Public"/>
+              </c:if>
+              <span class="text">
+                <spring:url var="img" value="/resources/images/private-bl.jpg"/>
+                <div class="privacy1">
+                  <img class="privacy" src="${img}" title="Private"/>
+                </div>
+                <div class="privacy2">
+                  <c:out value="Private"/>
+                </div>
+              </span>
+            </c:otherwise>
+          </c:choose>
+        </div>
+        <label>Account Visibility</label>
+        <c:choose>
+          <c:when test="${account.hidden eq true}">
+            <c:if test="${currentUser.role.id eq 0 or account.owner.name eq pageContext.request.userPrincipal.name}">
+              <input type="submit" class="visibility" name="visible" value="Mark as Visible"/>
+            </c:if>
+            <span class="text">
+              <spring:url var="img" value="/resources/images/hidden-bl.jpg"/>
+              <div class="privacy1">
+                <img class="privacy" src="${img}" title="Hidden"/>
+              </div>
+              <div class="privacy2">
+                <c:out value="Hidden"/>
+              </div>
+            </span>
+          </c:when>
+          <c:otherwise>
+            <c:if test="${currentUser.role.id eq 0 or account.owner.name eq pageContext.request.userPrincipal.name}">
+              <input type="submit" class="visibility" name="hide" value="Mark as Hidden"/>
+            </c:if>
+            <span class="text">
+              <spring:url var="img" value="/resources/images/visible-bl.jpg"/>
+              <div class="privacy1">
+                <img class="privacy" src="${img}" title="Visible"/>
+              </div>
+              <div class="privacy2">
+                <c:out value="Visible"/>
+              </div>
+            </span>
+          </c:otherwise>
+        </c:choose>
+      </div>
+      <div class="list">
+        <table id="transactions" class="cell-border">
+          <thead>
+            <th>ID</th>
+            <th>Timestamp</th>
+            <th>Credit</th>
+            <th>Debit</th>
+            <th>Balance</th>
+            <th>Notes</th>
+            <c:if test="${currentUser.role.id eq 0}">
+              <th>Delete</th>
+            </c:if>
+          </thead>
+          <tbody>
+            <c:forEach items="${account.transactList}" var="tx">
+              <tr>
+                  <c:choose>
+                    <c:when test="${tx.id le lastBalance}">
+                      <c:set var="bb" value="balanced"/>
+                    </c:when>
+                    <c:otherwise>
+                      <c:set var="bb" value=""/>
+                    </c:otherwise>
+                  </c:choose>
+                  <td class="align-right ${bb}"><c:out value="${tx.id}"/></td>
+                  <td class="align-right ${bb}"><c:out value="${tx.formattedTs}"/></td>
+                  <td class="align-right ${bb}"><c:out value="${tx.formattedCredit}"/></td>
+                  <td class="align-right ${bb}"><c:out value="${tx.formattedDebit}"/></td>
+                  <c:choose>
+                    <c:when test="${fn:startsWith(tx.formattedBalance, '$-')}">
+                      <c:set var="cc" value="align-right negative ${bb}"/>
+                    </c:when>
+                    <c:otherwise>
+                      <c:set var="cc" value="align-right ${bb}"/>
+                    </c:otherwise>
+                  </c:choose>
+                  <td class="${cc}"><c:out value="${tx.formattedBalance}"/></td>
+                  <td class="${bb}"><c:out value="${tx.note}"/></td>
+                  <c:if test="${currentUser.role.id eq 0}">
+                    <td class="${bb}">
+                      <c:if test="${tx.id gt lastBalance}">
+                        <spring:url var="url" value="/accounts/delete">
+                          <spring:param name="accountId" value="${account.id}"/>
+                          <spring:param name="txId" value="${tx.id}"/>
+                        </spring:url>
+                        <a href="${url}" onclick="return confirm('Are you sure?');">Delete</a>
+                      </c:if>
+                    </td>
+                  </c:if>
+              </tr>
+            </c:forEach>
+          </tbody>
+        </table>
+      </div>
+      <c:if test="${not empty msgText}">
+	    <div class="buttonbox">
+	      <label>Messages</label>
+	      <span class="text messages"><c:out value="${msgText}"/></span>
+	    </div>
+	  </c:if>
+	  <c:if test="${not empty errorText}">
+	    <div class="buttonbox">
+	      <label>The following error(s) occurred:</label>
+	      <span class="text errors"><c:out value="${errorText}"/></span>
+	    </div>
+	  </c:if>
+      <div class="buttonbox">
+        <div class="field2">
+          <label>Transaction Amount</label>
+          <form:input cssClass="numeric" path="transactionAmount"/>
+        </div>
+        <div class="field2">
+          <label>Notes</label>
+          <form:textarea cssClass="text" path="note"/>
+        </div>
+        <c:choose>
+          <c:when test="${(currentUser.role.id eq 0) and (account.pub or (account.owner.id == currentUser.id))}">
+            <input type="submit" name="deposit" value="Deposit"/>
+            <input type="submit" name="withdraw" value="Withdraw"/>
+            <c:set var="acct" value="account-admin"/>
+          </c:when>
+          <c:otherwise>
+            <c:set var="acct" value="account"/>
+          </c:otherwise>
+        </c:choose>
+        <form:select cssClass="${acct}" path="idTo">
+          <form:option value="0" label=""/>
+          <form:options items="${transferAccountList}" itemValue="id" itemLabel="extendedName"/>
+        </form:select>
+        <input type="submit" name="transfer" value="Transfer"/>
+        <c:if test="${account.owner.name eq pageContext.request.userPrincipal.name}">
+          <form:input cssClass="rename" path="name"/>
+          <input type="submit" name="rename" value="Rename"/>
+          <input type="submit" class="request" name="request" value="Request"/>
+        </c:if>
+      </div>
+      <div class="buttonbox">
+        <input type="submit" name="back" value="Back to Accounts..."/>
+      </div>
+    </form:form>
+  </div>
+
+</jsp:root>

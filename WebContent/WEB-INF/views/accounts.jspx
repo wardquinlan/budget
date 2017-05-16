@@ -1,0 +1,164 @@
+<jsp:root xmlns:spring="http://www.springframework.org/tags"
+          xmlns:jsp="http://java.sun.com/JSP/Page"
+          xmlns:security="http://www.springframework.org/security/tags"
+          xmlns:fmt="http://java.sun.com/jsp/jstl/fmt"
+          xmlns:form="http://www.springframework.org/tags/form"
+          xmlns:tiles="http://tiles.apache.org/tags-tiles"
+          xmlns:c="http://java.sun.com/jsp/jstl/core"
+          xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+          version="2.1">
+
+  <jsp:output omit-xml-declaration="yes" />
+
+  <div class="content">
+    <c:if test="${not empty messageText}">
+      <div class="messages">
+        <label>Messages</label>
+        <span class="text messages"><c:out value="${messageText}"/></span>
+      </div>
+    </c:if>
+    <c:if test="${not empty errorText}">
+      <div class="errors">
+        <label>The following error(s) occurred:</label>
+        <span class="text errors"><c:out value="${errorText}"/></span>
+      </div>
+    </c:if>
+    <div class="field2">
+      <div class="banner-left">
+        <label>Overall Balance</label>
+        <c:choose>
+          <c:when test="${fn:startsWith(overallBalance, '$-')}">
+            <c:set var="cc" value="text negative"/>
+          </c:when>
+          <c:otherwise>
+            <c:set var="cc" value="text"/>
+          </c:otherwise>
+        </c:choose>
+        <span class="${cc}"><c:out value="${overallBalance}"/></span>
+      </div>
+      <c:if test="${currentUser.role.id eq 0}">
+        <div class="banner-left">
+          <label>Last Balance</label>
+          <c:choose>
+            <c:when test="${fn:startsWith(overallLastBalance, '$-')}">
+              <c:set var="cc" value="text negative"/>
+            </c:when>
+            <c:otherwise>
+              <c:set var="cc" value="text"/>
+            </c:otherwise>
+          </c:choose>
+          <span class="${cc}"><c:out value="${overallLastBalance}"/></span>
+        </div>
+      </c:if>
+    </div>
+    <div class="list-accounts">
+      <table id="accounts" class="cell-border">
+        <thead>
+          <th>ID</th>
+          <th>Name</th>
+          <c:if test="${currentUser.role.id eq 0}">
+            <th>Owner</th>
+          </c:if>
+          <th>Privacy</th>
+          <th>Visibility</th>
+          <th>Balance</th>
+        </thead>
+        <tbody>
+          <c:forEach items="${accountList}" var="account">
+            <tr>
+              <c:choose>
+                <c:when test="${empty account.lastTransactId or (account.lastTransactId le lastBalance)}">
+                  <c:set var="bb" value="balanced"/>
+                  <c:set var="gr" value="-gr"/>
+                </c:when>
+                <c:otherwise>
+                  <c:set var="bb" value=""/>
+                  <c:set var="gr" value=""/>
+                </c:otherwise>
+              </c:choose>
+              <td class="align-right ${bb}"><c:out value="${account.lastTransactId}"/></td>
+              <spring:url var="url" value="/accounts/${account.id}"/>
+              <td class="${bb}"><a href="${url}"><c:out value="${account.name}"/></a></td>
+              <c:if test="${currentUser.role.id eq 0}">
+                <td class="${bb}"><c:out value="${account.owner.name}"/></td>
+              </c:if>
+              <c:choose>
+	            <c:when test="${account.pub eq true}">
+                  <td class="${bb}">
+                    <spring:url var="img" value="/resources/images/public${gr}.jpg"/>
+                    <div class="privacy1">
+                      <img class="privacy" src="${img}" title="Public"/>
+                    </div>
+                    <div class="privacy2">
+                      <c:out value="Public"/>
+                    </div>
+                  </td>
+	            </c:when>
+	            <c:otherwise>
+                  <td class="${bb}">
+                    <spring:url var="img" value="/resources/images/private${gr}.jpg"/>
+                    <div class="privacy1">
+                      <img class="privacy" src="${img}" title="Private"/>
+                    </div>
+                    <div class="privacy2">
+                      <c:out value="Private"/>
+                    </div>
+                  </td>
+	            </c:otherwise>
+	          </c:choose>
+	          <c:choose>
+	            <c:when test="${account.hidden eq true}">
+	              <td class="${bb}">
+                    <spring:url var="img" value="/resources/images/hidden${gr}.jpg"/>
+                    <div class="privacy1">
+                      <img class="privacy" src="${img}" title="Hidden"/>
+                    </div>
+                    <div class="privacy2">
+                      <c:out value="Hidden"/>
+                    </div>
+	              </td>
+	            </c:when>
+	            <c:otherwise>
+	              <td class="${bb}">
+                    <spring:url var="img" value="/resources/images/visible${gr}.jpg"/>
+                    <div class="privacy1">
+                      <img class="privacy" src="${img}" title="Visible"/>
+                    </div>
+                    <div class="privacy2">
+                      <c:out value="Visible"/>
+                    </div>
+	              </td>
+	            </c:otherwise>
+	          </c:choose>
+              <c:choose>
+                <c:when test="${fn:startsWith(account.formattedBalance, '$-')}">
+                  <c:set var="cc" value="align-right negative"/>
+                </c:when>
+                <c:otherwise>
+                  <c:set var="cc" value="align-right"/>
+                </c:otherwise>
+              </c:choose>
+              <td class="${cc} ${bb}"><c:out value="${account.formattedBalance}"/></td>              
+            </tr>
+          </c:forEach>
+        </tbody>
+      </table>  
+    </div>
+    <div class="buttonbox">
+      <spring:url var="url" value="/accounts"/>
+      <form:form modelAttribute="createBean" method="post" autocomplete="off" action="${url}">
+        <c:if test="${currentUser.role.id eq 0}">
+          <div class="buttonbox">
+            <input type="submit" name="balance" value="Balance"/>
+           <input type="submit" name="unbalance" value="Unbalance"/>
+         </div>
+        </c:if>
+        <div class="buttonbox">
+          <form:input path="accountName"/>
+          <input type="submit" name="create" value="Create New"/>
+        </div>
+      </form:form>
+    </div>
+  </div>
+
+</jsp:root>
