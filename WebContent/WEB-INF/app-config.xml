@@ -39,10 +39,10 @@
     </bean>
     
     <bean id="budgetDAO" class="budget.BudgetDAO">
-        <!-- 
         <constructor-arg type="java.lang.String" value="jdbc:postgresql://localhost/budget?user=budget&amp;password=budget00"/>
-        -->
+        <!-- 
         <constructor-arg type="java.lang.String" value="jdbc:postgresql://localhost/budgettest?user=budgettest&amp;password=budgettest00"/>
+        -->
                 
     </bean>
     
