@@ -2,7 +2,9 @@
 .cvsignore
 .project
 .settings
+Budget.war
 CVS
 build
+output
 sql/CREATE_TRANSACTIONS.sql
 

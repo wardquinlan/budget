@@ -11,7 +11,7 @@
     <hr/>
     
     <div class="footer">
-        <c:out value="Version 3.18"/>
+        <c:out value="Version 3.20"/>
     </div>
     
 </jsp:root>
